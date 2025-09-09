@@ -9,12 +9,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
 
     // Find user in auth and users tables
-    $query = "SELECT a.user_id, u.first_name, a.role FROM auth a
-              JOIN users u ON a.user_id = u.id
-              WHERE a.email = :email";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute(['email' => $email]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $query = "SELECT a.id AS auth_id, a.role, 
+                 COALESCE(ad.first_name, lp.first_name, r.first_name) AS first_name
+          FROM auth a
+          LEFT JOIN admins ad ON ad.auth_id = a.id
+          LEFT JOIN lgu_personnel lp ON lp.auth_id = a.id
+          LEFT JOIN residents r ON r.auth_id = a.id
+          WHERE a.email = :email";
+$stmt = $pdo->prepare($query);
+$stmt->execute(['email' => $email]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
 
     if ($user) {
         // Generate secure token
@@ -25,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $update->execute(['token' => $token, 'email' => $email]);
 
         // Create reset link
-        $resetLink = "http://localhost/capstonev2/reset_password.php?token=$token";
+        $resetLink = "http://localhost/capstone/reset_password.php?token=$token";
 
         // Send email using PHPMailer
         $result = sendResetEmail($email, $user['first_name'], $resetLink);

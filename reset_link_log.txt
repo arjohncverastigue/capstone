@@ -1,0 +1,1 @@
+[2025-09-07 14:49:45] Email: arjohnverastigue079@gmail.com, Name: jv, Link: http://localhost/capstone/reset_password.php?token=f97bba6fba6fc2f8c5024dc5e2bfb777f2d5c85959f110d03d6294bb6b84efd07a20353fe7557108772bdc0f5a51d5a3f8c8, Error: SMTP Error: Could not authenticate.
